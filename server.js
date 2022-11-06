@@ -1,11 +1,12 @@
 const express = require("express");
-const cors = require('cors')
+const cors = require("cors")
 const res = require("express/lib/response");
 const sqlite3 = require("sqlite3")
 const app = express();
 
 const PORT = 3001
 
+app.use(cors())
 app.use(express.json()); // for req.body
 
 const db = new sqlite3.Database('./db.sqlite3', (err) => {
