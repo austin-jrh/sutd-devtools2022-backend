@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require('cors')
 const res = require("express/lib/response");
 const sqlite3 = require("sqlite3")
 const app = express();
@@ -59,21 +60,10 @@ app.post("/profiles", (req, res) => {
   })
 })
 
-async function createProfile(login, displayName, password) {
-  db.run(CREATE_PROFILE_STATEMENT, [login, displayName, password], (err) => {
-    if(err) {
-      res.status(400).json({"error":err.message})
-      return
-    }
-
-    res.sendStatus(201)
-  });
-}
-
-const UPDATE_PROFILE_STATEMENT = 'UPDATE profiles SET displayName = ? WHERE login = ?'
+const UPDATE_PROFILE_STATEMENT = 'UPDATE profiles SET displayName = ? WHERE login = ? AND password = ?'
 app.patch("/profiles", (req, res) => {
   var reqBody = req.body
-  db.run(UPDATE_PROFILE_STATEMENT, [reqBody.displayName, reqBody.login], (err) => {
+  db.run(UPDATE_PROFILE_STATEMENT, [reqBody.displayName, reqBody.login, reqBody.password], (err) => {
     if (err) {
       res.status(400).json({"error":err.message})
       return
@@ -97,8 +87,8 @@ app.get("/tests", (req, res) => {
 });
 
 const GET_TEST_STATEMENT = 'SELECT * FROM customWords WHERE owner = ? AND id = ?';
-app.get("/tests/test?:login?:id", (req, res) => {
-  var params = [req.query.login, req.query.id]
+app.get("/tests/test?:owner?:id", (req, res) => {
+  var params = [req.query.owner, req.query.id]
   db.get(GET_TEST_STATEMENT, params, (err, row) => {
     if (err) {
       res.status(400).json({"error":err.message});
@@ -125,9 +115,22 @@ app.post("/tests", (req, res) => {
   })
 })
 
+const UPDATE_TEST_STATEMENT = 'UPDATE customWords SET name = ?, description = ?, words = ? WHERE owner = ? AND id = ?'
+app.patch("/tests", (req, res) => {
+  var reqBody = req.body
+  db.run(UPDATE_TEST_STATEMENT, [reqBody.name, reqBody.description, reqBody.words, reqBody.owner, reqBody.id], (err) => {
+    if (err) {
+      res.status(400).json({"error":err.message})
+      return
+    }
+
+    res.sendStatus(200)
+  })
+})
+
 const DELETE_TEST_STATEMENT = 'DELETE FROM customWords WHERE owner = ? AND id = ?'
-app.delete("/tests/test?:login?:id", (req, res) => {
-  var params = [req.query.login, req.query.id]
+app.delete("/tests/test?:owner?:id", (req, res) => {
+  var params = [req.query.owner, req.query.id]
   db.run(DELETE_TEST_STATEMENT, params, (err) => {
     if (err) {
       res.status(400).json({"error":err.message})
