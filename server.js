@@ -17,9 +17,9 @@ const db = new sqlite3.Database('./db.sqlite3', (err) => {
   console.log('Connected to database.')
 });
 
-app.get("/test", (req, res) => {
-  res.status(200).json({success: true})
-} )
+// app.get("/test", (req, res) => {
+//   res.status(200).json({success: true})
+// } )
 
 app.get("/profiles", (req, res) => {
   db.all('SELECT * FROM profiles', (err, rows) => {
@@ -55,7 +55,7 @@ app.post("/profiles", (req, res) => {
   db.run(CREATE_PROFILE_STATEMENT, [reqBody.login, reqBody.displayName, reqBody.password], (err) => {
     if(err) {
       if(err.message === "SQLITE_CONSTRAINT: UNIQUE constraint failed: profiles.login") {
-        res.status(409).json({"status":"error", "error":err.message, "conflict":"Login already exists"})
+        res.status(409).json({"status":"error", "error":err.message, "message":"Login already exists."})
       }
       else {
         res.status(400).json({"status":"error", "error":err.message})
@@ -72,11 +72,11 @@ app.patch("/profiles", (req, res) => {
   var reqBody = req.body
   db.run(UPDATE_PROFILE_STATEMENT, [reqBody.displayName, reqBody.login, reqBody.password], (err) => {
     if (err) {
-      res.status(400).json({"error":err.message})
+      res.status(400).json({"status": "error", "error":err.message})
       return
     }
 
-    res.sendStatus(200)
+    res.status(200).json({"status":"success", "message":"profile updated"})
   })
 })
 
@@ -93,16 +93,26 @@ app.get("/tests", (req, res) => {
   });
 });
 
-const GET_TEST_STATEMENT = 'SELECT * FROM customWords WHERE owner = ? AND id = ?';
-app.get("/tests/test?:owner?:id", (req, res) => {
-  var params = [req.query.owner, req.query.id]
-  db.get(GET_TEST_STATEMENT, params, (err, row) => {
+const GET_TEST_STATEMENT = 'SELECT * FROM customWords WHERE owner = ?';
+app.get("/tests/test?", (req, res) => {
+  var params = [req.query.owner]
+  db.all(GET_TEST_STATEMENT, params, (err, rows) => {
     if (err) {
       res.status(400).json({"error":err.message});
       return;
     }
-    if(row == undefined) {
-      res.sendStatus(204)
+
+    res.status(200).json(rows);
+  })
+})
+
+const GET_TEST_WITH_ID_STATEMENT = 'SELECT * FROM customWords WHERE id = ?';
+app.get("/testID/", (req, res) => {
+  var params = [req.query.id]
+  db.get(GET_TEST_WITH_ID_STATEMENT, params, (err, row) => {
+    if (err) {
+      res.status(400).json({"error":err.message});
+      return;
     }
 
     res.status(200).json(row);
