@@ -53,11 +53,16 @@ app.post("/profiles", (req, res) => {
   var reqBody = req.body;
   db.run(CREATE_PROFILE_STATEMENT, [reqBody.login, reqBody.displayName, reqBody.password], (err) => {
     if(err) {
-      res.status(400).json({"error":err.message})
+      if(err.message === "SQLITE_CONSTRAINT: UNIQUE constraint failed: profiles.login") {
+        res.status(409).json({"status":"error", "error":err.message, "conflict":"Login already exists"})
+      }
+      else {
+        res.status(400).json({"status":"error", "error":err.message})
+      }
       return
     }
 
-    res.sendStatus(201)
+    res.status(201).json({"status":"success", "message":"user created"})
   })
 })
 
