@@ -41,7 +41,8 @@ app.get("/profiles/profile?:login?:password", (req, res) => {
       return;
     }
     if(row == undefined) {
-      res.sendStatus(204)
+      res.status(204).json({})
+      return;
     }
 
     res.status(200).json(row);
