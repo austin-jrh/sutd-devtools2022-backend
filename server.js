@@ -67,10 +67,10 @@ app.post("/profiles", (req, res) => {
   })
 })
 
-const UPDATE_PROFILE_STATEMENT = 'UPDATE profiles SET displayName = ? WHERE login = ? AND password = ?'
+const UPDATE_PROFILE_STATEMENT = 'UPDATE profiles SET displayName = ?, highscore = ? WHERE login = ? AND password = ?'
 app.patch("/profiles", (req, res) => {
   var reqBody = req.body
-  db.run(UPDATE_PROFILE_STATEMENT, [reqBody.displayName, reqBody.login, reqBody.password], (err) => {
+  db.run(UPDATE_PROFILE_STATEMENT, [reqBody.displayName, reqBody.highscore, reqBody.login, reqBody.password], (err) => {
     if (err) {
       res.status(400).json({"status": "error", "error":err.message})
       return
