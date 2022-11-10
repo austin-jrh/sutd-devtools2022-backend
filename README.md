@@ -25,6 +25,14 @@ Features are:
   - Register, Login, Edit Display Name, Persistent User using `localStorage`.
 - Typing Test
   - Generate Random words, Custom user defined words, (scuffed) WPM calculation, saving of high score to logged in user.
+  
+Words per minute is calculated with the following formula:
+
+![image](https://user-images.githubusercontent.com/87303121/201144212-f3df9184-df5d-4336-bf05-1ab7f408a653.png)
+
+Taken from: https://www.typingtyping.com/wpm-calculator/
+
+_Note_: The formula is loosely followed because shortcuts are done due to technical limitations. Therefore, the WPM calculation is not very accurate.
 
 ## Technical Stack
 ### Front-end
