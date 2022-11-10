@@ -32,10 +32,13 @@ app.get("/profiles", (req, res) => {
   });
 });
 
-const GET_PROFILE_STATEMENT = 'SELECT * FROM profiles WHERE login = ? AND password = ?';
+//const GET_PROFILE_STATEMENT = 'SELECT * FROM profiles WHERE login = ? AND password = ?';
 app.get("/profiles/profile?:login?:password", (req, res) => {
-  var params = [req.query.login, req.query.password]
-  db.get(GET_PROFILE_STATEMENT, params, (err, row) => {
+  //var params = [req.query.login, req.query.password]
+  const query = `SELECT * FROM profiles WHERE login = '${req.query.login}' AND password = '${req.query.password}'`
+  //db.get(GET_PROFILE_STATEMENT, params, (err, row) => {
+  console.log(query)
+  db.get(query, [], (err, row) => {
     if (err) {
       res.status(400).json({"error":err.message});
       return;
@@ -67,10 +70,12 @@ app.post("/profiles", (req, res) => {
   })
 })
 
-const UPDATE_PROFILE_STATEMENT = 'UPDATE profiles SET displayName = ?, highscore = ? WHERE login = ? AND password = ?'
+//const UPDATE_PROFILE_STATEMENT = 'UPDATE profiles SET displayName = ?, highscore = ? WHERE login = ? AND password = ?'
 app.patch("/profiles", (req, res) => {
   var reqBody = req.body
-  db.run(UPDATE_PROFILE_STATEMENT, [reqBody.displayName, reqBody.highscore, reqBody.login, reqBody.password], (err) => {
+  const query = `UPDATE profiles SET displayName = '${reqBody.displayName}', highscore = ${reqBody.highscore} WHERE login = '${reqBody.login}' AND password = '${reqBody.password}'`
+  // db.run(UPDATE_PROFILE_STATEMENT, [reqBody.displayName, reqBody.highscore, reqBody.login, reqBody.password], (err) => {
+    db.run(query, [], (err) => {
     if (err) {
       res.status(400).json({"status": "error", "error":err.message})
       return
