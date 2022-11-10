@@ -45,6 +45,44 @@ Using:
 - NGINX (Reverse proxy)
 
 ## Demo
+- Get all custom tests
+
+![](./readme_images/01.png)
+
+
+- Get all profiles
+
+![](./readme_images/02.png)
+
+
+- Get `user` profile
+
+![](./readme_images/03.png)
+
+
+- Create `user` profile
+
+![](./readme_images/04.png)
+
+
+- Edit `user` profile
+
+![](./readme_images/05.png)
+
+
+- Delete `test`
+
+![](./readme_images/06.png)
+
+Full list:
+
+Operation | Profiles | Tests 
+--- | --- | ---
+GET all | http://student-4.sutdacademytools.net/profiles | http://student-4.sutdacademytools.net/tests
+GET one | http://student-4.sutdacademytools.net/profiles/profile?login=$login&password=$password | http://student-4.sutdacademytools.net:3001/testID/?id=$id
+POST (create) | http://student-4.sutdacademytools.net/profiles/profiles <br />body:<br />{<br />&ensp;"login": $login,<br />&nbsp;"displayName":$displayName,<br />&nbsp;"password":$password<br />} | http://student-4.sutdacademytools.net/tests <br />body:<br />{<br />&ensp;"owner": $login,<br />&nbsp;"name":$name,<br />&nbsp;"description":$description,<br />&nbsp;"words":$words<br />}
+PATCH (update) | http://student-4.sutdacademytools.net/profiles/profiles <br />body:<br />{<br />&nbsp;"displayName": $name,<br />&nbsp;"highscore":$highscore,<br />&nbsp;"login":$login,<br />&nbsp;"password":$password<br />} | http://student-4.sutdacademytools.net/tests <br />body:<br />{<br />&nbsp;"owner": $login,<br />&nbsp;"name":$name,<br />&nbsp;"description":$description,<br />&nbsp;"words":$words,<br />&nbsp;"owner":$login,<br />&nbsp;"id":$id<br />}
+DELETE | N.A. | http://student-4.sutdacademytools.net/tests/test?owner=$owner&id=$id
 
 ## Setup
 1. Clone the repository. 
