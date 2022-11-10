@@ -11,6 +11,7 @@ Link to site: http://student-4.sutdacademytools.net (Hopefully its up)
 - [Technical Stack](#technical-stack)
   - [Front-end](#front-end)
   - [Back-end](#back-end)
+  - [Deployment](#deployment)
 - [Demo](#demo)
 - [Setup](#setup)
 - [Security Vulnerability](#security-vulnerability)
@@ -41,8 +42,12 @@ Using:
 - Node.js (runtime environment)
 - Express (web application framework)
 - Sqlite (database)
+
+### Deployment
+Using:
 - Docker (Container)
 - NGINX (Reverse proxy)
+- Amazon EC2 (Cloud)
 
 ## Demo
 - Get all custom tests
@@ -67,7 +72,7 @@ Using:
 
 - Edit `user` profile
 
-![](./readme_images/05.png)
+![](./readme_images/05_fix.png)
 
 
 - Delete `test`
@@ -90,7 +95,7 @@ DELETE | N.A. | http://student-4.sutdacademytools.net/tests/test?owner=$owner&id
 git clone https://github.com/austin-jrh/sutd-devtools2022-backend.git
 ```
 
-2. Install Docker
+2. Install Docker.
 ```
 # Install Docker packages
 sudo apt-get update
@@ -187,5 +192,37 @@ sudo service nginx start
 
 ## Security Vulnerability
 ### SQL Injection attack with crafted form inputs (login)
+To log in to an existing user, the app will do a query to the database if an entry with `login` and `password` exists in the database. 
+
+![](./readme_images/07.png)
+
+If the account does exist, the user is "logged in" to the account and have free reign. If the user provides the wrong login/password, the app will return an empty body with a status of `204`. 
+
+![](./readme_images/08.png)
+
+The query used for verification are as follows: 
+```sql
+SELECT * FROM profiles WHERE login = '${req.query.login}' AND password = '${req.query.password}'
+```
+In order for an attacker to by-pass this check, the attacker can do a query where the `login` is filled and the rest of the string will be commented.
+
+![](./readme_images/09.png)
+
+In order to mitigate this, the app can use `preparedStatements`, or libraries such as `axios` or `knex`, which separates the statement and query values, which also are stored in variables.
+
 ### Modifying the database without authorization (change highscore)
+In the app, the user is allowed to change the account's display name, which uses the following query:
+```sql
+UPDATE profiles SET displayName = '${reqBody.displayName}', highscore = ${reqBody.highscore} WHERE login = '${reqBody.login}' AND password = '${reqBody.password}'
+```
+The attacker will be able to by-pass the `login` and `password` check by adding comments to the body of the request.
+![](./readme_images/10.png)
+![](./readme_images/11.png)
+
+In addition to the mitigation of the first vulnerability, the entries can be validated, removing vulnerable characters such as `--` or `#` that comments out code.
+
 ### Access to profiles
+Anyone can access the credentials stored in the database by accessing the URL. 
+![](./readme_images/02.png)
+
+To mitigate this, the app can have a proper authentication and encryption so that accounts cannot be easily compromised.
