@@ -1,7 +1,5 @@
 # Typing Test
 
-Link to site: http://student-4.sutdacademytools.net (Hopefully its up)
-
 ### Link to frontend repository: https://github.com/austin-jrh/sutd-devtools2022
 
 ---
